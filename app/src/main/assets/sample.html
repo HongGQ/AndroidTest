@@ -1,0 +1,137 @@
+<html>
+<head>
+    <h1>
+        This is a HTML Page
+    </h1>
+    <!-- JavaScript脚本，主要包括了按钮要执行的函数，显示对话框等 -->
+    <script type="text/javascript">
+    //JavaScript方法，弹出对话框显示信息
+    function myFunction()
+    {
+        alert("Hello World!");
+    }
+    function onAlert()
+    {
+        console.log("onAlert method");//显示调试信息
+        alert("This is a alert sample from html");
+    }
+    function onConfirm()
+    {
+        console.log("onConfirm method");
+        var b = confirm("are you sure to login?");
+        alert("your choice is " + b);
+    }
+    function onPrompt()
+    {
+        console.log("onPrompt method");
+        var b = prompt("please input your password", "aaa");
+        alert("your input is " + b);
+    }
+
+    //调用绑定的Java对象的方法，即调用Android代码显示对话框
+    function showAndroidToast(toast)
+    {
+        console.log("showAndroidToast method");
+        myInterfaceName.showToast(toast);//注意此处的myInterfaceName要和外部传入的名字一致，大小写正确
+    }
+    
+    function getElements(formId) {    
+        var form = document.getElementById(formId);
+        var elements = new Array();
+        var tagElements = form.getElementsByTagName('input');
+        for (var j = 0; j < tagElements.length; j++){
+            elements.push(tagElements[j]);
+  
+        }
+        return elements;
+    }
+  
+    //获取单个input中的【name,value】数组
+    function inputSelector(element) {
+    if (element.checked)
+        return [element.name, element.value];
+    }
+      
+    function input(element) {
+        switch (element.type.toLowerCase()) {
+            case 'submit':
+            case 'hidden':
+            case 'password':
+            case 'text':
+                return [element.name, element.value];
+            case 'checkbox':
+            case 'radio':
+                return inputSelector(element);
+        }
+        return false;
+    }
+  
+    //组合URL
+    function serializeElement(element) {
+    var method = element.tagName.toLowerCase();    
+    var parameter = input(element);    
+    
+    if (parameter) {    
+      var key = encodeURIComponent(parameter[0]);    
+      if (key.length == 0) return;    
+    
+      if (parameter[1].constructor != Array)    
+        parameter[1] = [parameter[1]];    
+          
+      var values = parameter[1];    
+      var results = [];    
+      for (var i=0; i<values.length; i++) {    
+        results.push(key + '=' + encodeURIComponent(values[i]));    
+      }    
+      return results.join('&');    
+    }    
+    }
+
+    // 获取表单数据
+    function getFromData(formId){
+        var elements = getElements(formId);    
+    	var queryComponents = new Array();    
+    
+    	for (var i = 0; i < elements.length; i++) {    
+      		var queryComponent = serializeElement(elements[i]);    
+      		if (queryComponent)    
+        	queryComponents.push(queryComponent);    
+    	}    
+    
+    	// return queryComponents.join('&');
+    	alert(queryComponents);
+    	showAndroidToast(queryComponents);
+    }
+    </script>
+</head>
+<body>
+
+<p>
+    <!-- 前四个按钮调用JS函数 -->
+    JavaScript函数调用 <br/>
+    <input type="button" value="点击这里" onclick="myFunction()"/><br/>
+    <input type="button" value="alert" onclick="onAlert()"/> <br/>
+    <input type="button" value="confirm" onclick="onConfirm()"/> <br/>
+    <input type="button" value="prompt" onclick="onPrompt()"/><br/>
+    <!-- 上面用了两种定义按钮的方式，效果一样的 -->
+</p>
+
+<p>
+    <!-- 这个Say hello 按钮调用Android代码中的方法 -->
+    用JavaScript按钮调用Android代码 <br/>
+    <input type="button" value="Say hello" onClick="showAndroidToast('Hello Android!')"/>
+</p>
+
+<form id="login">
+    userName:
+    <input type="text" name="input" id="userName" name="userName"/>
+    <br/>
+    passWord:
+    <input type="password" name="input" id="passWord" name="passWord"/>
+</form>
+<p>
+    <input type="button" value="login" onclick="getFromData('login')"/><br/>
+</p>
+
+</body>
+</html>
